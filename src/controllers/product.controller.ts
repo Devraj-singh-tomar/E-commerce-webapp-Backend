@@ -36,3 +36,12 @@ export const newProduct = TryCatch(
     });
   }
 );
+
+export const getLatestProducts = TryCatch(async (req, res, next) => {
+  const products = await Product.find({}).sort({ createdAt: -1 }).limit(5);
+
+  return res.status(200).json({
+    success: true,
+    products,
+  });
+});
