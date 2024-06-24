@@ -4,6 +4,7 @@ import {
   deleteProduct,
   getAdminProducts,
   getAllCategories,
+  getAllProducts,
   getLatestProducts,
   getSingleProduct,
   newProduct,
@@ -16,6 +17,9 @@ const app = express.Router();
 app.post("/new", adminOnly, singleUpload, newProduct);
 
 app.get("/latest", getLatestProducts);
+
+// search route  and to get all products with filter
+app.get("/all", getAllProducts);
 
 app.get("/categories", getAllCategories);
 
