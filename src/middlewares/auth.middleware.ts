@@ -12,7 +12,7 @@ export const adminOnly = TryCatch(async (req, res, next) => {
   if (!user) return next(new ErrorHandler("Id not found", 401));
 
   if (user.role !== "admin")
-    return next(new ErrorHandler("cannot give access to admin", 401));
+    return next(new ErrorHandler("cannot give access to admin", 403));
 
   next();
 });
