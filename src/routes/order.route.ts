@@ -2,6 +2,7 @@ import express from "express";
 import { adminOnly } from "../middlewares/auth.middleware.js";
 import {
   allOrders,
+  getSingleOrder,
   myOrders,
   newOrder,
 } from "../controllers/order.controller.js";
@@ -16,5 +17,7 @@ app.get("/my", myOrders);
 
 // route- /api/v1/order/all
 app.get("/all", adminOnly, allOrders);
+
+app.route("/:id").get(getSingleOrder);
 
 export default app;
