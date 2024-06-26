@@ -32,7 +32,7 @@ export const newOrder = TryCatch(
     )
       return next(new ErrorHandler("Please Enter all field", 400));
 
-    await Order.create({
+    const order = await Order.create({
       shippingInfo,
       orderItems,
       user,
@@ -45,7 +45,13 @@ export const newOrder = TryCatch(
 
     await reduceStock(orderItems);
 
-    await invalidateCache({ product: true, order: true, admin: true });
+    await invalidateCache({
+      product: true,
+      order: true,
+      admin: true,
+      userId: user,
+      productId: order.orderItems.map((i) => String(i.productId)),
+    });
 
     return res.status(201).json({
       success: true,
@@ -109,5 +115,63 @@ export const getSingleOrder = TryCatch(async (req, res, next) => {
   return res.status(200).json({
     success: true,
     order,
+  });
+});
+
+export const processOrder = TryCatch(async (req, res, next) => {
+  const { id } = req.params;
+
+  const order = await Order.findById(id);
+
+  if (!order) return next(new ErrorHandler("Order not found", 404));
+
+  switch (order.status) {
+    case "Processing":
+      order.status = "Shipped";
+      break;
+    case "Shipped":
+      order.status = "Delivered";
+      break;
+    default:
+      order.status = "Delivered";
+      break;
+  }
+
+  await order.save();
+
+  await invalidateCache({
+    product: false,
+    order: true,
+    admin: true,
+    userId: order.user,
+    orderId: String(order._id),
+  });
+
+  return res.status(200).json({
+    success: true,
+    message: "Order Processed successfully",
+  });
+});
+
+export const deleteOrder = TryCatch(async (req, res, next) => {
+  const { id } = req.params;
+
+  const order = await Order.findById(id);
+
+  if (!order) return next(new ErrorHandler("Order not found", 404));
+
+  await order.deleteOne();
+
+  await invalidateCache({
+    product: false,
+    order: true,
+    admin: true,
+    userId: order.user,
+    orderId: String(order._id),
+  });
+
+  return res.status(200).json({
+    success: true,
+    message: "Order deleted successfully",
   });
 });
