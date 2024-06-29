@@ -3,6 +3,7 @@ import { connectDB } from "./utils/features.js";
 import { errorMiddleware } from "./middlewares/error.middleware.js";
 import NodeCache from "node-cache";
 import { config } from "dotenv";
+import Stripe from "stripe";
 
 //its a middleware
 import morgan from "morgan";
@@ -21,8 +22,11 @@ config({
 const port = process.env.PORT || 4000;
 
 const mongoURI = process.env.MONGO_URI || "";
+const stripeKey = process.env.STRIPE_KEY || "";
 
 connectDB(mongoURI);
+
+export const stripe = new Stripe(stripeKey);
 
 // Caching the data or optimizing
 export const myCache = new NodeCache();
