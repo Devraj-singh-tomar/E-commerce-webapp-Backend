@@ -3,7 +3,7 @@ import { TryCatch } from "../middlewares/error.middleware.js";
 import { Order } from "../models/order.model.js";
 import { Product } from "../models/product.model.js";
 import { User } from "../models/user.model.js";
-import { calculatePercentage } from "../utils/features.js";
+import { calculatePercentage, getInventories } from "../utils/features.js";
 
 export const getDashboardStats = TryCatch(async (req, res, next) => {
   let stats = {};
@@ -160,18 +160,9 @@ export const getDashboardStats = TryCatch(async (req, res, next) => {
       }
     });
 
-    const categoriesCountPromise = categories.map((category) =>
-      Product.countDocuments({ category })
-    );
-
-    const categoriesCount = await Promise.all(categoriesCountPromise);
-
-    const categoryCount: Record<string, number>[] = [];
-
-    categories.forEach((category, i) => {
-      categoryCount.push({
-        [category]: Math.round((categoriesCount[i] / productsCount) * 100),
-      });
+    const categoryCount: Record<string, number>[] = await getInventories({
+      categories,
+      productsCount,
     });
 
     const userRatio = {
