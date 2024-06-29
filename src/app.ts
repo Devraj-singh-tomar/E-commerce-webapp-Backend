@@ -12,6 +12,7 @@ import userRoute from "./routes/user.route.js";
 import productRoute from "./routes/products.route.js";
 import orderRoute from "./routes/order.route.js";
 import paymentRoute from "./routes/payment.route.js";
+import dashboardRoute from "./routes/stats.js";
 
 config({
   path: "./.env",
@@ -41,6 +42,7 @@ app.use("/api/v1/user", userRoute);
 app.use("/api/v1/product", productRoute);
 app.use("/api/v1/order", orderRoute);
 app.use("/api/v1/payment", paymentRoute);
+app.use("/api/v1/dashboard", dashboardRoute);
 
 app.use("/uploads", express.static("uploads"));
 
