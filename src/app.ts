@@ -4,6 +4,7 @@ import { errorMiddleware } from "./middlewares/error.middleware.js";
 import NodeCache from "node-cache";
 import { config } from "dotenv";
 import Stripe from "stripe";
+import cors from "cors";
 
 //its a middleware
 import morgan from "morgan";
@@ -34,6 +35,8 @@ export const myCache = new NodeCache();
 const app = express();
 
 app.use(morgan("dev"));
+
+app.use(cors());
 
 app.use(express.json());
 
